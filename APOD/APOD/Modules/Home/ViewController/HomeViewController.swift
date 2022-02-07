@@ -130,19 +130,32 @@ class HomeViewController: UIViewController {
             guard let self = self else { return }
             switch response {
             case .success( _):
-                DispatchQueue.main.async { [self] in
+                DispatchQueue.main.async {
                 self.indicatorView.hidesWhenStopped = true
-                self.indicatorView.isHidden = true
                 self.indicatorView.stopAnimating()
                 self.refreshScreenTitle()
                 self.tableView.reloadData()
-                    self.favouriteButton.isSelected = self.viewModel.isAlreadyAddedToFavourites()
+                self.favouriteButton.isSelected = self.viewModel.isAlreadyAddedToFavourites()
                 }
             default:
-                break
-                
+                DispatchQueue.main.async {
+                 self.indicatorView.hidesWhenStopped = true
+                 self.indicatorView.stopAnimating()
+                 self.showAlert()
+                }
             }
         }
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "Alert", message: "It looks like something went wrong", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { (_) in
+            print("User click Dismiss button")
+        }))
+        
+        self.present(alert, animated: true, completion: {
+            print("completion block")
+        })
     }
     
     @objc private func datePickerValueChanged(sender:UIDatePicker) {
